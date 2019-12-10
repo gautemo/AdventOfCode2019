@@ -1,37 +1,44 @@
 import java.io.File
+import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.sqrt
 
 fun main(){
     val map = File(Thread.currentThread().contextClassLoader.getResource("input.txt")!!.toURI()).readText()
     val astroids = getAstroids(map)
     val best = findBestCount(astroids)
     println(best)
+    val killed200 = get200Kill(astroids.toMutableList())
+    println(killed200)
 }
 
 fun get200Kill(astroids: MutableList<Astroid>): Int{
     val station = findBest(astroids)
 
-    val s = astroids.filter { it.x == 13 && it.y == 13 }
-    println(count(s[0], astroids))
+    val loop = astroids.map { angle(station, it) }.toSet().sortedDescending()
 
     var kills = 0
-    var angle = 0
+    var i = 0
     var killed: Astroid? = null
     while(kills < 200){
-        //killed = kill(station, astroids, angle)
+        val angle = loop[i]
+        killed = kill(station, astroids, angle)
         if(killed != null){
             astroids.remove(killed)
             kills++
         }
-        angle++
-        if(angle > 360) angle = 0
+        i++
+        if(i >= loop.size) i = 0
     }
 
     return killed!!.x * 100 + killed.y
 }
 
-//fun kill(station: Astroid, astroids: List<Astroid>, angle: Int) = astroids.filter { angle(station, it) == angle }.minBy { abs(station.x + it.x) + abs(station.y + it.y) }
+
+fun kill(station: Astroid, astroids: List<Astroid>, angle: Double) = astroids.filter { angle(station, it) == angle }.minBy { distance(station, it) }
+
+fun distance(a1: Astroid, a2: Astroid) = sqrt(pow(abs(a1.x.toDouble() - a2.x.toDouble()), 2.0) + pow(abs(a1.y.toDouble() - a2.y.toDouble()), 2.0))
 
 fun getAstroids(map: String): List<Astroid>{
     val astroids = mutableListOf<Astroid>()
@@ -53,11 +60,10 @@ fun count(a: Astroid, astroids: List<Astroid>): Int{
     return hits.size
 }
 
-/*fun angle(a1: Astroid, a2: Astroid): Int{
-    val degree = 90 - Math.toDegrees(atan2(a1.y.toDouble() - a2.y.toDouble(), a1.x.toDouble() - a2.x.toDouble())).toInt()
-    return if(degree > 0) degree else degree + 360
-}*/
 
-fun angle(a1: Astroid, a2: Astroid) = atan2(a1.y.toDouble() - a2.y.toDouble(), a1.x.toDouble() - a2.x.toDouble())
+fun angle(a1: Astroid, a2: Astroid): Double{
+    val degree = 90 - Math.toDegrees(atan2(a1.y.toDouble() - a2.y.toDouble(), a1.x.toDouble() - a2.x.toDouble())) //+90 to point to north
+    return if(degree > 0) degree else degree + 360
+}
 
 data class Astroid(val x: Int, val y: Int)
