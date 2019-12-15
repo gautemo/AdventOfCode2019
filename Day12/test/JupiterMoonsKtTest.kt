@@ -33,7 +33,6 @@ internal class JupiterMoonsKtTest {
 
     @Test
     fun `should be repeated after 2772 steps`() {
-    runBlocking{
         val input = "<x=-1, y=0, z=2>\n" +
                 "<x=2, y=-10, z=-7>\n" +
                 "<x=4, y=-8, z=8>\n" +
@@ -41,9 +40,7 @@ internal class JupiterMoonsKtTest {
 
         val moons = getMoons(input)
         val res = repeatsAfter(moons)
-            assertEquals(2772, res)
-    }
-
+        assertEquals(2772, res)
     }
 
     @Test
@@ -54,8 +51,8 @@ internal class JupiterMoonsKtTest {
                 "<x=9, y=-8, z=-3>"
 
         val moons = getMoons(input)
-        //val res = repeatsAfter(moons)
-        //assertEquals(4686774924, res)
+        val res = repeatsAfter(moons)
+        assertEquals(4686774924, res)
     }
 
 }
