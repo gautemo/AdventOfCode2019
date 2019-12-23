@@ -9,7 +9,7 @@ internal class CaveKtTest {
         val map = "#########\n" +
                 "#b.A.@.a#\n" +
                 "#########"
-        val res = path(map)
+        val res = bestOneMap(map)
         assertEquals(8, res)
     }
 
@@ -20,8 +20,40 @@ internal class CaveKtTest {
                 "######################.#\n" +
                 "#d.....................#\n" +
                 "########################"
-        val res = path(map)
+        val res = bestOneMap(map)
         assertEquals(86, res)
+    }
+
+    @Test
+    fun `should find splitted map in 8 steps`(){
+        val map = """
+            #######
+            #a.#Cd#
+            ##...##
+            ##.@.##
+            ##...##
+            #cB#Ab#
+            #######
+        """.trimIndent()
+        val res = bestSplittedMap(map)
+        assertEquals(8, res)
+    }
+
+    @Test
+    fun `should find splitted map in 72 steps`(){
+        val map = """
+                #############
+                #g#f.D#..h#l#
+                #F###e#E###.#
+                #dCba...BcIJ#
+                #####.@.#####
+                #nK.L...G...#
+                #M###N#H###.#
+                #o#m..#i#jk.#
+                #############
+        """.trimIndent()
+        val res = bestSplittedMap(map)
+        assertEquals(72, res)
     }
 
 }
