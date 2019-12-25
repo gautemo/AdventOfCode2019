@@ -11,7 +11,7 @@ fun main(){
     val input = File(Thread.currentThread().contextClassLoader.getResource("input.txt")!!.toURI()).readText()
 
     println(bestOneMap(input))
-    //println(bestSplittedMap(input.trim()))
+    println(bestSplittedMap(input.trim())) // This is slow, just try the numbers on the way
 }
 
 fun bestOneMap(input: String): Int{
@@ -77,7 +77,7 @@ class Finder(map: Map, val keyKnower: KeyKnower){
                     }
                 }
             }
-            println("Batch took $t. toCheck: ${history.toCheck.size}. Best: $bestStep")
+            //println("Batch took $t. toCheck: ${history.toCheck.size}. Best: $bestStep")
         }
     }
 }
