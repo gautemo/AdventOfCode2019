@@ -6,20 +6,35 @@ fun main(){
     val state = File(Thread.currentThread().contextClassLoader.getResource("input.txt")!!.toURI()).readText()
 
     val computers = (0 until 50).map { Computer(state, it.toLong()) }
+    var packAtNat: Pack? = null
 
-    var found255 = false
-    while(!found255){
+    var lastYFromNat: Long? = null
+    var shouldStop = false
+
+    while(!shouldStop){
+        var idle = true
         for(comp in computers){
-            comp.run()
+            val isIdle = comp.run()
+            if(!isIdle) idle = false
             val pack = comp.pack()
             pack?.let { pack ->
-                println("$pack, ${comp.adress}")
+                println(pack)
                 if(pack.adress == 255L){
                     println(pack)
-                    found255 = true
+
+                    packAtNat = pack
                 }else {
                     computers.first { c -> c.adress == pack.adress }.receive(pack)
                 }
+            }
+        }
+        if(idle && packAtNat != null){
+            if(lastYFromNat == packAtNat!!.y){
+                shouldStop = true
+                println(lastYFromNat)
+            }else{
+                lastYFromNat = packAtNat!!.y
+                computers.first { c -> c.adress == 0L }.receive(packAtNat!!)
             }
         }
     }
@@ -29,10 +44,14 @@ class Computer(code: String, val adress: Long){
     val intCode = IntCode(code, listOf(adress))
     val output = mutableListOf<Long>()
 
-    fun run(){
-        when (val out = intCode.step()) {
-            IntCode.NEED_INPUT -> intCode.addInput(-1)
-            else -> if (out != null) output.add(out)
+    fun run(): Boolean{
+        while (true) {
+            when (val out = intCode.step()) {
+                IntCode.NEED_INPUT -> {
+                    intCode.addInput(-1); return true
+                }
+                else -> if (out != null) { output.add(out); return false }
+            }
         }
     }
 
